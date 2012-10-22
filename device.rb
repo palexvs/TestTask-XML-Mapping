@@ -6,62 +6,62 @@ class Device; end
 class DID; end
 
 module ToJson
-	def to_json(*a)
-	    to_hash.to_json(*a)
-	end		
+  def to_json(*a)
+      to_hash.to_json(*a)
+  end   
 end
 
 class CustomerResponse
-	include XML::Mapping
-	include ToJson
+  include XML::Mapping
+  include ToJson
 
-	object_node :device, "User/Device", :class=>Device
+  object_node :device, "User/Device", :class=>Device
 
-	def to_hash
-	    {
-	      device: device
-	    }
-	end	
+  def to_hash
+      {
+        device: device
+      }
+  end 
 end
 
 class Device
-	include XML::Mapping
-	include ToJson
+  include XML::Mapping
+  include ToJson
 
-	text_node :location, "Privileged/Identification/@Location"
-	text_node :username, "DeviceID/@DefaultDID"
-	text_node :name, "DeviceID/@Name"	
+  text_node :location, "Privileged/Identification/@Location"
+  text_node :username, "DeviceID/@DefaultDID"
+  text_node :name, "DeviceID/@Name" 
 
-	array_node :numbers, "DID", :class=>DID, :default_value=>[]
+  array_node :numbers, "DID", :class=>DID, :default_value=>[]
 
-	def to_hash
-	    {
-	      location: location,
-	      username: username,
-	      name: name,
-	      numbers: numbers,
-	    }
-	end	
+  def to_hash
+      {
+        location: location,
+        username: username,
+        name: name,
+        numbers: numbers,
+      }
+  end 
 end
 
 class DID
-	include XML::Mapping
-	include ToJson
+  include XML::Mapping
+  include ToJson
 
-	text_node :number, "@E164"
-	text_node :vnum_id, "@VNumID"
-	text_node :starcode, "@StarCode"
-	text_node :ring_pattern, "@RingPattern"
+  text_node :number, "@E164"
+  text_node :vnum_id, "@VNumID"
+  text_node :starcode, "@StarCode"
+  text_node :ring_pattern, "@RingPattern"
 
 
-	def to_hash
-		{
+  def to_hash
+    {
       number: number,
       vnum_id: vnum_id,
       starcode: starcode,
-      ring_pattern: ring_pattern,			
-		}
-	end	
+      ring_pattern: ring_pattern,     
+    }
+  end 
 end
 
 # <CustomerResponse xmlns="http://corp.ooma.internal/namespaces/customer" ProcTime="287" Action="GET_ADMUSER">
