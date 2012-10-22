@@ -10,4 +10,4 @@ module Examples
 	resp.device.location = "SomeLocation"
 	puts resp.to_hash
 	resp.save_to_xml.write $stdout,2
-end
+end`
