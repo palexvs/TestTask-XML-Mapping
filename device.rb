@@ -9,19 +9,19 @@ module ToJson
   def to_json(*a)
       to_hash.to_json(*a)
   end   
+
+  def to_hash
+    hash = {}
+    instance_variables.each {|var| hash[var.to_s.delete("@")] = instance_variable_get(var) }
+    hash
+  end  
 end
 
 class CustomerResponse
   include XML::Mapping
   include ToJson
 
-  object_node :device, "User/Device", :class=>Device
-
-  def to_hash
-      {
-        device: device
-      }
-  end 
+  object_node :device, "User/Device", :class=>Device 
 end
 
 class Device
@@ -33,15 +33,6 @@ class Device
   text_node :name, "DeviceID/@Name" 
 
   array_node :numbers, "DID", :class=>DID, :default_value=>[]
-
-  def to_hash
-      {
-        location: location,
-        username: username,
-        name: name,
-        numbers: numbers,
-      }
-  end 
 end
 
 class DID
@@ -52,16 +43,6 @@ class DID
   text_node :vnum_id, "@VNumID"
   text_node :starcode, "@StarCode"
   text_node :ring_pattern, "@RingPattern"
-
-
-  def to_hash
-    {
-      number: number,
-      vnum_id: vnum_id,
-      starcode: starcode,
-      ring_pattern: ring_pattern,     
-    }
-  end 
 end
 
 # <CustomerResponse xmlns="http://corp.ooma.internal/namespaces/customer" ProcTime="287" Action="GET_ADMUSER">
