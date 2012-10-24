@@ -32,12 +32,26 @@ module Proxy
       def device_valid?(data)
         !data.empty? && data[:username].length >= 10
       end
+
+      def xml_to_json(xmlObject)
+        dids = []
+        xmlObject.user.device.numbers.each do |did|
+          dids << {number: did.number, vnum_id: did.vnum_id, starcode: did.starcode, ring_pattern: did.ring_pattern }
+        end
+        {:device => {
+          :username => xmlObject.user.device.deviceID.username,
+          :name => xmlObject.user.device.deviceID.name,
+          :location => xmlObject.user.device.privileged.identification.location,
+          :numbers => dids
+          }
+        }        
+      end
     end
 
     desc "Get device"
     get :device do
       resp = loadXML()
-      resp.to_json
+      xml_to_json(resp)
     end
 
     desc "POST device"
@@ -45,9 +59,9 @@ module Proxy
       resp = loadXML()
 
       if device_valid?(params[:device])
-        resp.device.username = params[:device][:username]
-        resp.device.name = params[:device][:name]
-        resp.device.location = params[:device][:location]
+        resp.user.device.deviceID.username = params[:device][:username]
+        resp.user.device.deviceID.name = params[:device][:name]
+        resp.user.device.privileged.identification.location = params[:device][:location]
 
         {success: saveXML(resp)}
       else
