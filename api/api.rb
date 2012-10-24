@@ -15,8 +15,11 @@ module Proxy
       end
 
       def saveXML(xmlObject, file = XML_DATA_OUTPUT)
+        xmlObject.action = "SET_ADMDID"
+        
         begin
           fXML = File.new(file,"w")
+          fXML.puts '<?xml version="1.0" encoding="UTF-8"?>'
           xmlObject.save_to_xml.write fXML
           fXML.close
         rescue

@@ -7,7 +7,15 @@ module UserXML
   class CustomerResponse
     include XML::Mapping
 
+    root_element_name "CustomerResponse"
+    
+    text_node :action, "@Action"
+
     object_node :device, "User/Device", :class=>Device 
+
+    def as_json(*a)
+      {device: device}
+    end
   end
 
   class Device
