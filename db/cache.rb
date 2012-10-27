@@ -1,5 +1,4 @@
 class Cache
- 
   def self.init
     case Settings.db.adapter
       when 'couchdb'
@@ -9,7 +8,7 @@ class Cache
         require './db/memcache.rb'
         @db = Memcache.new(Settings.db.server,Settings.db.port)
       else
+        raise 'Unknow value for "db::adapter" in application.yml'  
       end
   end
-
 end
