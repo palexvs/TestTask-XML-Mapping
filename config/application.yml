@@ -7,6 +7,6 @@ defaults: &defaults
 
 memcache:
   db:
-    adapter: memcachedb1
+    adapter: memcachedb
     port: 11211
     server: 127.0.0.1    
