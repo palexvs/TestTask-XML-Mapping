@@ -1,5 +1,6 @@
 require 'model/user_xml'
 require 'active_support/json'
+require 'db/cache'
 
 module Proxy
   XML_DATA_INPUT = "./xml/task.xml"
@@ -9,7 +10,13 @@ module Proxy
     version 'v1', :using => :header, :vendor => 'company'
     format :json
 
+    cache = Cache.init
+
     helpers do
+      def cache
+        @cache
+      end
+
       def loadXML
         UserXML::CustomerResponse.load_from_file(XML_DATA_INPUT)
       end
@@ -34,15 +41,16 @@ module Proxy
       end
 
       def xml_to_json(xmlObject)
-        dids = []
-        xmlObject.user.device.numbers.each do |did|
-          dids << {number: did.number, vnum_id: did.vnum_id, starcode: did.starcode, ring_pattern: did.ring_pattern }
-        end
         {:device => {
           :username => xmlObject.user.device.deviceID.username,
           :name => xmlObject.user.device.deviceID.name,
           :location => xmlObject.user.device.privileged.identification.location,
-          :numbers => dids
+          :numbers => xmlObject.user.device.numbers.map do |did| 
+                        { number: did.number, 
+                          vnum_id: did.vnum_id, 
+                          starcode: did.starcode, 
+                          ring_pattern: did.ring_pattern } 
+                      end
           }
         }        
       end
@@ -50,8 +58,14 @@ module Proxy
 
     desc "Get device"
     get :device do
-      resp = loadXML()
-      xml_to_json(resp)
+      if cached = cache.get('device')
+        cached[:data]
+      else
+        resp = loadXML()
+        resp_json = xml_to_json(resp)
+        cache.put('device', resp_json)
+        resp_json
+      end
     end
 
     desc "POST device"
@@ -63,9 +77,11 @@ module Proxy
         resp.user.device.deviceID.name = params[:device][:name]
         resp.user.device.privileged.identification.location = params[:device][:location]
 
-        {success: saveXML(resp)}
+        cache.del('device') if saved = saveXML(resp) 
+
+        { success: saved }
       else
-        {success: false}
+        { success: false }
       end    
 
     end
