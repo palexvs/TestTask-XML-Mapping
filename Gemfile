@@ -1,6 +1,8 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in Calc.gemspec
+gem 'rack-test'
+gem 'rspec'
 gem 'grape'
 gem 'couchrest'
+gem 'dalli'
 gem 'settingslogic'

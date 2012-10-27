@@ -1,10 +1,5 @@
-require 'model/user_xml'
-require 'active_support/json'
-require 'db/cache'
-
 module Proxy
-  XML_DATA_INPUT = "./xml/task.xml"
-  XML_DATA_OUTPUT = "./xml/task_out.xml"
+  XML_DATA = "./xml/task.xml"
 
   class API < ::Grape::API
     version 'v1', :using => :header, :vendor => 'company'
@@ -19,10 +14,10 @@ module Proxy
       end
 
       def loadXML
-        UserXML::CustomerResponse.load_from_file(XML_DATA_INPUT)
+        UserXML::CustomerResponse.load_from_file(XML_DATA)
       end
 
-      def saveXML(xmlObject, file = XML_DATA_OUTPUT)
+      def saveXML(xmlObject, file = XML_DATA)
         xmlObject.action = "SET_ADMDID"
         
         begin
@@ -60,9 +55,9 @@ module Proxy
     # API
     desc "Get device"
     get :device do
-      if cached = cache.get('device')
+      if from_cache = cache.get('device')
         header("From-Cache", "true")
-        cached[:data]
+        from_cache
       else
         resp = loadXML()
         resp_json = xml_to_json(resp)

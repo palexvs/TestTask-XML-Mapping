@@ -1,9 +1,10 @@
 $:.unshift File.dirname(__FILE__)
 
-#require 'bundler/setup'
-#require 'rubygems'
-require 'settings'
 require 'grape'
-require 'api/api'
+require 'active_support/json'
+require './settings'
+require './model/user_xml'
+require './db/cache'
+require './api/api'
 
 run Proxy::API
