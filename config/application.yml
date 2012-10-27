@@ -1,0 +1,6 @@
+defaults: &defaults
+  db:
+    adapter: couchdb
+    database: cache
+    port: 5984
+    server: 127.0.0.1

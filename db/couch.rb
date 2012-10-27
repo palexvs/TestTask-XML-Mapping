@@ -1,12 +1,9 @@
 require 'couchrest'
 
 class Couch
-  SERVER = '127.0.0.1'
-  PORT = '5984'
-  DB_NAME = 'cache'
 
-  def initialize
-    @db = CouchRest.database!("http://#{SERVER}:#{PORT}/#{DB_NAME}")
+  def initialize(server = '127.0.0.1', port = '5984', db_name = 'cache')
+    @db = CouchRest.database!("http://#{server}:#{port}/#{db_name}")
   end
 
   def get(key)

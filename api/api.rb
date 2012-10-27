@@ -12,6 +12,7 @@ module Proxy
 
     cache = Cache.init
 
+    # HELPERS
     helpers do
       def cache
         @cache
@@ -56,9 +57,11 @@ module Proxy
       end
     end
 
+    # API
     desc "Get device"
     get :device do
       if cached = cache.get('device')
+        header("From-Cache", "true")
         cached[:data]
       else
         resp = loadXML()
